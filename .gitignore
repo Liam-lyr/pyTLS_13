@@ -1,0 +1,36 @@
+*/__pycache__
+*/.pytest_cache
+*/.mypy_cache
+*/.tox
+*/.venv
+*/.eggs
+*/build
+*/dist
+*/.git
+*/.hg
+*/.svn
+*/.DS_Store
+*/.vscode
+*/.idea
+*/.mypy_cache
+*/.pytest_cache
+*/.coverage
+*/.hypothesis
+*/.mypy_cache
+*/.pytest_cache
+*/.coverage
+*/.hypothesis
+*/.mypy_cache
+*/.pytest_cache
+
+# Ignore all .pyc files
+*.pyc
+
+# Ignore all .pyo files
+*.pyo
+
+# Ignore all .swp files
+*.swp
+
+# Ignore all .swo files
+*.swo
