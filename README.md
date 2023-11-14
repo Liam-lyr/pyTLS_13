@@ -2,9 +2,7 @@
 
 > ⏳ *EN Version coming soon.*
 >
-> 🥳 *This project starts in 2023.8.4, wish me luck.*
-
-**本项目并非简单的“模拟 TLS 1.3 握手过程”。** 
+> ⏳ *This project is migrated from my course project, therefore the documentations are in a messy state. I will reorganize them and in the future.*
 
 由于本项目所有消息的字节级设计、交互流程均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致，并可直接与现实中使用 TLS 1.3 的其他主机直接通信。
 
@@ -137,7 +135,7 @@ python main_client.py
 
 
 
-### Run as Real TLS 1.3 Server and TLS 1.3 Client Using OpenSSL
+### Run as Real TLS 1.3 Server and Client Using OpenSSL
 
 本项目并非简单的“模拟 TLS 1.3 握手过程”。由于本项目所有消息的字节级设计均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致。并可直接与现实中使用 TLS 1.3 的其他主机直接通信，也可作为真实可用的 TLS 1.3 服务器、客户端进行交互。
 
