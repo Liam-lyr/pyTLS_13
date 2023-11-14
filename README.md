@@ -6,18 +6,7 @@
 
 **本项目并非简单的“模拟 TLS 1.3 握手过程”。** 
 
-由于本项目所有消息的字节级设计均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致。并可直接与现实中使用 TLS 1.3 的其他主机直接通信。
-
-**For TAs of 信息系统安全课程：**
-
-请直接查阅 `./CN_docs/` 中的文档，其中包含了本项目的所有实现细节。每份文档的内容见[下文](#complete-documentation)。
-
-对于课程要求的内容：
-- **Design Document:** `./CN_docs/1-Overview.md`, `./CN_docs/3-Handshake_Workflow.md`, `./CN_docs/4-Handshake_Principles.md`, `./CN_docs/7-Code_Run.md` 包含了课程项目要求的所有内容。
-- **Manual:** [下文](#manual) 中包含了本项目的所有使用说明。
-- **Source Code:** `./src/` 包含了本项目的所有源代码。文件功能概述见[下文](#Files-&-Code)。
-
-
+由于本项目所有消息的字节级设计、交互流程均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致，并可直接与现实中使用 TLS 1.3 的其他主机直接通信。
 
 
 ## Complete Documentation
