@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# Key Share
+#   - RFC 8446 #section-4.2.8
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.8
+# ------------------------------------------------------------------------------
 
 from type import Uint16, OpaqueUint16, List
 import structmeta as meta
@@ -5,13 +10,31 @@ import structmeta as meta
 from protocol_types import HandshakeType
 from protocol_ext_supportedgroups import NamedGroup
 
+
+### KeyShareEntry ###
+# struct {
+#     NamedGroup group;
+#     opaque key_exchange<1..2^16-1>;
+# } KeyShareEntry;
+#
 @meta.struct
 class KeyShareEntry(meta.StructMeta):
     group: NamedGroup
     key_exchange: OpaqueUint16
 
+
 KeyShareEntrys = List(size_t=Uint16, elem_t=KeyShareEntry)
 
+
+### KeyShareClientHello / KeyShareServerHello ###
+# struct {
+#     KeyShareEntry client_shares<0..2^16-1>;
+# } KeyShareClientHello;
+#
+# struct {
+#     KeyShareEntry server_share;
+# } KeyShareServerHello;
+#
 @meta.struct
 class KeyShareHello(meta.StructMeta):
     shares: meta.Select('Handshake.msg_type', cases={
@@ -37,17 +60,20 @@ if __name__ == '__main__':
                     shares=KeyShareEntrys([
                         KeyShareEntry(
                             group=NamedGroup.x25519,
-                            key_exchange=OpaqueUint16(bytes.fromhex('01234567'))
+                            key_exchange=OpaqueUint16(
+                                bytes.fromhex('01234567'))
                         ),
                         KeyShareEntry(
                             group=NamedGroup.secp256r1,
-                            key_exchange=OpaqueUint16(bytes.fromhex('89abcdef'))
+                            key_exchange=OpaqueUint16(
+                                bytes.fromhex('89abcdef'))
                         )
                     ])
                 )
             )
             ksh = handshake.fragment
-            ksh_byte = bytes.fromhex('0010 001d 0004 01234567 0017 0004 89abcdef')
+            ksh_byte = bytes.fromhex(
+                '0010 001d 0004 01234567 0017 0004 89abcdef')
             self.assertEqual(bytes(ksh), ksh_byte)
             self.assertEqual(Handshake.from_bytes(bytes(handshake)), handshake)
 

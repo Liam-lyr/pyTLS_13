@@ -24,7 +24,7 @@ from protocol_ext_keyshare import KeyShareHello, KeyShareEntrys, KeyShareEntry
 from protocol_authentication import Finished, Hash, OpaqueHash
 from protocol_alert import Alert, AlertLevel, AlertDescription
 
-from crypto_x25519 import x25519
+from crypto_ecdhe import x25519
 import crypto_hkdf as hkdf
 
 

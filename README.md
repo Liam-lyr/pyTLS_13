@@ -1,8 +1,6 @@
 # README
 
-> ⏳ *EN Version coming soon.*
->
-> ⏳ *This project is migrated from my course project, therefore the documentations are in a messy state. I will reorganize them and in the future.*
+> 🌏🌎 *The structure and the content of the CN docs has been revised according to RFC 8446.*
 
 由于本项目所有消息的字节级设计、交互流程均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致，并可直接与现实中使用 TLS 1.3 的其他主机直接通信。
 

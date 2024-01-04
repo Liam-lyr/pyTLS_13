@@ -26,6 +26,7 @@ def struct(cls):
     return dataclasses.dataclass(repr=False)(cls)
 
 
+# Abstract class representing the structure of TLS messages
 class StructMeta(Type):
 
     def __post_init__(self):
@@ -134,11 +135,10 @@ class StructMeta(Type):
     def __len__(self):
         return len(bytes(self))
 
+
 # Class for selecting types based on the situation.
 # For example, used when Handshake.msg_type is either client_hello or server_hello,
 # and the type of structure fields of oneself or children changes.
-
-
 class Select:
     def __init__(self, switch, cases):
         assert isinstance(switch, str)

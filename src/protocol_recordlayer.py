@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# Record Layer
+#   - RFC 8446 #section-5.1 (Record Layer)
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-5.1
+#   - RFC 8446 #section-5.2 (Record Payload Protection)
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-5.2
+# ------------------------------------------------------------------------------
+
 
 import io
 from type import Uint8, Uint16, Opaque, OpaqueLength, OpaqueLength
@@ -7,11 +15,18 @@ from protocol_types import ContentType
 from protocol_handshake import Handshake, HandshakeType
 from protocol_alert import Alert
 
-# ------------------------------------------------------------------------------
-# Record Layer
 
 ProtocolVersion = Uint16
 
+
+### TLSPlaintext ###
+# struct {
+#     ContentType type;
+#     ProtocolVersion legacy_record_version;
+#     uint16 length;
+#     opaque fragment[TLSPlaintext.length];
+# } TLSPlaintext;
+#
 @meta.struct
 class TLSPlaintext(meta.StructMeta):
     type: ContentType
@@ -31,7 +46,8 @@ class TLSPlaintext(meta.StructMeta):
     def encrypt(self, cipher_instance):
         msg_pad = TLSInnerPlaintext.append_pad(self)
         tag_size = cipher_instance.__class__.tag_size
-        aad = bytes.fromhex('170303') + bytes(Uint16(len(bytes(msg_pad)) + tag_size))
+        aad = bytes.fromhex('170303') + \
+            bytes(Uint16(len(bytes(msg_pad)) + tag_size))
         encrypted_record = cipher_instance.encrypt_and_tag(msg_pad, aad)
         return TLSCiphertext(
             encrypted_record=OpaqueLength(bytes(encrypted_record))
@@ -54,6 +70,15 @@ class TLSPlaintext(meta.StructMeta):
             messages.append(elem_t.from_fs(stream))
         return messages
 
+
+### TLSCiphertext ###
+# struct {
+#     ContentType opaque_type = application_data; /* 23 */
+#     ProtocolVersion legacy_record_version = 0x0303; /* TLS v1.2 */
+#     uint16 length;
+#     opaque encrypted_record[TLSCiphertext.length];
+# } TLSCiphertext;
+#
 @meta.struct
 class TLSCiphertext(meta.StructMeta):
     opaque_type: ContentType = ContentType.application_data
@@ -77,7 +102,7 @@ class TLSCiphertext(meta.StructMeta):
 
     # Upon receiving Application Data
     def _decrypt_app_data(self, plaindata, content_type):
-        # NewSessionTicketを受け取った場合
+        # When receiving the NewSessionTicket
         if plaindata[:2] == bytes(HandshakeType.new_session_ticket) + b'\x00':
             return TLSPlaintext(
                 type=content_type,
@@ -91,6 +116,14 @@ class TLSCiphertext(meta.StructMeta):
                 fragment=OpaqueLength(bytes(plaindata))
             )
 
+
+### TLSInnerPlaintext ###
+# struct {
+#     opaque content[TLSPlaintext.length];
+#     ContentType type;
+#     uint8 zeros[length_of_padding];
+# } TLSInnerPlaintext;
+#
 class TLSInnerPlaintext:
     @staticmethod
     def append_pad(tlsplaintext):
@@ -104,7 +137,7 @@ class TLSInnerPlaintext:
         for pos, value in zip(reversed(range(len(data))), reversed(data)):
             if value != 0:
                 break
-        return data[:pos], ContentType(Uint8(value)) #, data[pos+1:]
+        return data[:pos], ContentType(Uint8(value))  # , data[pos+1:]
         # content, type, zeros
 
 
@@ -172,7 +205,8 @@ if __name__ == '__main__':
                 msg_type=HandshakeType.server_hello,
                 msg=ServerHello(
                     random=Random(bytes.fromhex('CC' * 32)),
-                    legacy_session_id_echo=OpaqueUint8(bytes.fromhex('DD' * 32)),
+                    legacy_session_id_echo=OpaqueUint8(
+                        bytes.fromhex('DD' * 32)),
                     cipher_suite=CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
                     legacy_compression_method=Opaque1(b'\x00'),
                     extensions=Extensions([]),

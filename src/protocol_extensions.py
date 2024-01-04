@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# TLS Extensions
+#   - RFC 8446 #section-4.2 (Extensions)
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-4.2
+#   - RFC 8446 #section-4.3.1 (Encrypted Extensions)
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-4.3.1
+# ------------------------------------------------------------------------------
+
 
 from type import Uint16, List, EnumUnknown, OpaqueLength
 import structmeta as meta
@@ -7,6 +15,16 @@ from protocol_ext_supportedgroups import NamedGroupList
 from protocol_ext_keyshare import KeyShareHello
 from protocol_ext_signature import SignatureSchemeList
 
+
+### ExtensionType ###
+# enum {
+#     server_name(0),
+#     max_fragment_length(1),
+#     status_request(5),
+#     ...
+#     (65535)
+# } ExtensionType;
+#
 class ExtensionType(EnumUnknown):
     elem_t = Uint16
 
@@ -35,6 +53,13 @@ class ExtensionType(EnumUnknown):
     signature_algorithms_cert = Uint16(50)
     key_share = Uint16(51)
 
+
+### Extension ###
+# struct {
+#     ExtensionType extension_type;
+#     opaque extension_data<0..2^16-1>;
+# } Extension;
+#
 @meta.struct
 class Extension(meta.StructMeta):
     extension_type: ExtensionType
@@ -47,10 +72,12 @@ class Extension(meta.StructMeta):
         meta.Otherwise: OpaqueLength,
     })
 
+
 Extensions = List(size_t=Uint16, elem_t=Extension)
 
 # ------------------------------------------------------------------------------
 # Server Parameters
+
 
 @meta.struct
 class EncryptedExtensions(meta.StructMeta):
@@ -76,7 +103,8 @@ if __name__ == '__main__':
                 )
             )
 
-            self.assertEqual(bytes(e)[:2], bytes(ExtensionType.supported_groups))
+            self.assertEqual(bytes(e)[:2], bytes(
+                ExtensionType.supported_groups))
             self.assertEqual(Extension.from_bytes(bytes(e)), e)
 
         def test_encrypted_extensions(self):

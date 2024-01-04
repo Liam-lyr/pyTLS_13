@@ -1,10 +1,24 @@
-
-# B.3.1.4.  Supported Groups Extension
-# https://tools.ietf.org/html/rfc8446#appendix-B.3.1.4
+# ------------------------------------------------------------------------------
+# Supported Groups Extension
+#   - RFC 8446 #section-4.2.7
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.7
+# ------------------------------------------------------------------------------
 
 from type import Uint16, List, Enum
 import structmeta as meta
 
+
+### NamedGroup ###
+# enum {
+#     /* Elliptic Curve Groups (ECDHE) */
+#     obsolete_RESERVED(0x0001..0x0016),
+#     secp256r1(0x0017), secp384r1(0x0018), secp521r1(0x0019),
+#     obsolete_RESERVED(0x001A..0x001C),
+#     x25519(0x001D), x448(0x001E),
+#     ...
+#     (0xFFFF)
+# } NamedGroup;
+#
 # Group for key exchange
 class NamedGroup(Enum):
     elem_t = Uint16
@@ -31,8 +45,15 @@ class NamedGroup(Enum):
     # ecdhe_private_use = Uint16(0xFE00)..Uint16(0xFEFF)
     # obsolete_RESERVED = Uint16(0xFF01)..Uint16(0xFF02)
 
+
 NamedGroups = List(size_t=Uint16, elem_t=NamedGroup)
 
+
+### NamedGroupList ###
+# struct {
+#     NamedGroup named_group_list<2..2^16-1>;
+# } NamedGroupList;
+#
 @meta.struct
 class NamedGroupList(meta.StructMeta):
     named_group_list: NamedGroups

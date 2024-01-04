@@ -1,7 +1,22 @@
+# ------------------------------------------------------------------------------
+# Signature Algorithms
+#   - RFC 8446 #section-4.2.3
+#     * https://datatracker.ietf.org/doc/html/rfc8446#section-4.2.3
+# ------------------------------------------------------------------------------
 
 from type import Uint16, List, Enum
 import structmeta as meta
 
+
+### SignatureScheme ###
+# enum {
+#     rsa_pkcs1_sha256(0x0401),
+#     rsa_pkcs1_sha384(0x0501),
+#     rsa_pkcs1_sha512(0x0601),
+#     ...
+#     (0xFFFF)
+# } SignatureScheme;
+#
 class SignatureScheme(Enum):
     elem_t = Uint16
 
@@ -36,8 +51,15 @@ class SignatureScheme(Enum):
     # Reserved Code Points
     # private_use = Uint16(0xFE00)..Uint16(0xFFFF)
 
+
 SignatureSchemes = List(size_t=Uint16, elem_t=SignatureScheme)
 
+
+### SignatureSchemeList ###
+# struct {
+#     SignatureScheme supported_signature_algorithms<2..2^16-2>;
+# } SignatureSchemeList;
+#
 @meta.struct
 class SignatureSchemeList(meta.StructMeta):
     supported_signature_algorithms: SignatureSchemes
