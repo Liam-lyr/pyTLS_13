@@ -5,6 +5,8 @@
 > 对应代码：`/src/protocal_handshake.py`，`/src/protocol_hello.py`，`/src/protocol_extensions.py`，`/src/protocol_ext_*.py`，`/src/protocol_authentication.py`，`/src/protocol_ticket.py`。
 
 
+
+
 ## 数据结构概述
 > 对应代码：`/src/protocal_handshake.py`
 
@@ -94,6 +96,8 @@ class Handshake(meta.StructMeta):
 - **msg_type**：消息结构类型（2字节）
 - **length**：消息结构的字节长度（3字节）
 - **消息数据**：消息结构的数据
+
+
 
 
 ## Key Exchange Messages
@@ -232,6 +236,8 @@ class ServerHello(meta.StructMeta):
 如果在 Client 发来的 ClientHello 消息中能够找到一组可以相互支持的参数，但是 Client 又不能为接下来的握手提供足够的信息，这个时候 Server 就需要发送 HelloRetryRequest 消息来响应 ClientHello 消息。
 
 `HelloRetryRequest` 的结构与 `ServerHello` 相同。
+
+
 
 
 ## Extensions
@@ -446,6 +452,7 @@ OpaqueHash = Opaque(lambda self: Hash.length)
 class Finished(meta.StructMeta):
     verify_data: OpaqueHash
 ```
+
 
 
 ## End of Early Data 和 Post-Handshake Messages

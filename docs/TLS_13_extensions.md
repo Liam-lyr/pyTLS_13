@@ -17,6 +17,7 @@
 由于拓展众多，本项目目前未能一一实现，本节直接翻译自 [RFC 8446 - Sec 4.2 - Extensions](https://datatracker.ietf.org/doc/html/rfc8446#section-4.2)。
 
 
+
 ## 概述
 
 许多 TLS 的消息都包含 tag-length-value 编码的扩展数据结构：
@@ -128,6 +129,8 @@
 
 - 扩展应尽可能设计为防止能通过人为操纵握手信息，从而强制使用（或不使用）特定功能的攻击。不管这个功能是否会引起安全问题，这个原则都必须遵守。通常，包含在 Finished 消息的哈希输入中的扩展字段是不用担心的，但是在握手阶段，扩展试图改变了发送消息的含义，这种情况需要特别小心。设计者和实现者应该意识到，在握手完成身份认证之前，攻击者都可以修改消息，插入、删除或者替换扩展。
 
+
+
 ## 1. Supported Versions
 
 ```c
@@ -151,6 +154,7 @@
 如果 ClientHello 中存在 “supported\_versions” 扩展，Server 禁止使用 ClientHello.legacy\_version 的值作为版本协商的值，只能使用 "supported\_versions" 决定 Client 的偏好。Server 必须只选择该扩展中存在的 TLS 版本，并且必须要忽略任何未知版本。注意，如果通信的一方支持稀疏范围，这种机制使得可以在 TLS 1.2 之前的版本间进行协商。选择支持 TLS 的以前版本的 TLS 1.3 的实现应支持 TLS 1.2。Server 应准备好接收包含此扩展名的 ClientHellos 消息，但不要在 viersions 列表中包含 0x0304。
 
 Server 在协商 TLS 1.3 之前的版本，必须要设置 ServerHello.version，不能发送 "supported\_versions" 扩展。Server 在协商 TLS 1.3 版本时候，必须发送 "supported\_versions" 扩展作为响应，并且扩展中要包含选择的 TLS 1.3 版本号(0x0304)。还要设置 ServerHello.legacy\_version 为 0x0303(TLS 1.2)。Client 必须在处理 ServerHello 之前检查此扩展(尽管需要先解析 ServerHello 以便读取扩展名)。如果 "supported\_versions" 扩展存在，Client 必须忽略 ServerHello.legacy\_version 的值，只使用 "supported\_versions" 中的值确定选择的版本。如果 ServerHello 中的 "supported\_versions" 扩展包含了 Client 没有提供的版本，或者是包含了 TLS 1.3 之前的版本(本来是协商 TLS 1.3 的，却又包含了 TLS 1.3 之前的版本)，Client 必须立即发送 "illegal\_parameter" alert 消息中止握手。
+
 
 
 ## 2. Cookie
@@ -250,6 +254,7 @@ enum {
 	表示使用正在被废弃中的算法，因为这些算法有已知的缺点。特别是 SHA-1 配合上文提到的 RSASSA-PKCS1-v1\_5 和 ECDSA 算法一起使用。这些值仅指，出现在证书中又没有被定义用于签名 TLS 握手消息的签名。这些值会出现在 "signature\_algorithms" 和 "signature\_algorithms\_cert" 中，因为需要向后兼容 TLS 1.2 。终端不应该协商这些算法，但允许这样做只是为了向后兼容。提供这些值的 Client 必须把他们列在最低优先级的位置上(在 SignatureSchemeList 中的所有其他算法之后列出)。TLS 1.3 Server 绝不能提供 SHA-1 签名证书，除非没有它就无法生成有效的证书链。
 
 	
+
 自签名证书上的签名或信任锚的证书不能通过校验，因为它们开始了一个认证路径(见 [RFC 5280](https://tools.ietf.org/html/rfc5280#section-3.2))。开始认证路径的证书可以使用 "signature\_algorithms" 扩展中不建议支持的签名算法。
 	
 请注意，TLS 1.2 中这个扩展的定义和 TLS 1.3 的定义不同。在协商 TLS 1.2 版本时，愿意协商 TLS 1.2 的 TLS 1.3 实现必须符合 [RFC5246](https://tools.ietf.org/html/rfc5246) 的要求，尤其是：
@@ -262,11 +267,11 @@ enum {
 	
 - 即使协商了 TLS 1.2，支持了 RSASSA-PSS（在TLS 1.3中是强制性的）的实现方也准备接受该方案的签名。在TLS 1.2中，RSASSA-PSS 与 RSA 密码套件一起使用。
 	
-	
-	
-	
+
+
+
 ## 4. Certificate Authorities
-	
+
 "certificate\_authorities" 扩展用于表示终端支持的 CA, 并且接收的端点应该使用它来指导证书的选择。
 	
 "certificate\_authorities" 扩展的主体包含了一个 CertificateAuthoritiesExtension 结构：
@@ -278,14 +283,16 @@ enum {
           DistinguishedName authorities<3..2^16-1>;
       } CertificateAuthoritiesExtension;
 ```
-	
+
 - authorities:  
 	可接受证书颁发机构的一个可分辨名字 [X501](https://tools.ietf.org/html/rfc8446#ref-X501) 的列表	，这个列表是以 DER [X690](https://tools.ietf.org/html/rfc8446#ref-X690) 编码格式表示的。这些可分辨的名称为，信任锚或从属的 CA 指定所需的可分辨的名称。因此，可以使用此消息描述已知的信任锚以及所需的授权空间。
 	
+
 Client 可能会在 ClientHello 消息中发送 "certificate\_authorities" 扩展，Server 可能会在 CertificateRequest 消息中发送 "certificate\_authorities" 扩展。
 
-
 "trusted\_ca\_keys" 扩展和 "certificate\_authorities" 扩展有相同的目的，但是更加复杂。"trusted\_ca\_keys" 扩展不能在 TLS 1.3 中使用，但是它在 TLS 1.3 之前的版本中，可能出现在 Client 的 ClientHello 消息中。
+
+
 
 
 ## 5. OID Filters
@@ -333,6 +340,8 @@ PKIX RFC 定义了各种证书扩展 OID 及其对应的值类型。根据类型
 "post\_handshake\_auth" 扩展名中的 "extension\_data" 字段为零长度。
 
 
+
+
 ## 7. Supported Groups
 
 当 Client 发送 "supported\_groups" 扩展的时候，这个扩展表明了 Client 支持的用于密钥交换的命名组。按照优先级从高到低。
@@ -375,6 +384,7 @@ PKIX RFC 定义了各种证书扩展 OID 及其对应的值类型。根据类型
 named\_group\_list 中的项根据发送者的优先级排序(最好是优先选择的)。
 
 在 TLS 1.3 中，Server 允许向 Client 发送 "supported\_groups" 扩展。Client 不能在成功完成握手之前，在 "supported\_groups" 中找到的任何信息采取行动，但可以使用从成功完成的握手中获得的信息来更改在后续连接中的 "key\_share" 扩展中使用的组。如果 Server 中有一个组，它更想接受 "key\_share" 扩展中的那些值，但仍然愿意接受 ClientHello 消息，这时候它应该发送 "supported\_groups" 来更新 Client 的偏好视图。无论 Client 是否支持它，这个扩展名都应该包含 Server 支持的所有组。
+
 
 
 ## 8. Key Share
@@ -504,6 +514,8 @@ Server 不能发送 "psk\_key\_exchange\_modes" 扩展:
 
 未来分配的任何值都必须要能保证传输的协议消息可以明确的标识 Server 选择的模式。目前 Server 选择的值由 ServerHello 中存在的 "key\_share" 表示。
 
+
+
 ## 10. Early Data Indication
 
 当使用 PSK 并且 PSK 允许使用 early\_data 的时候，Client 可以在其第一个消息中发送应用数据。如果 Client 选择这么做，则必须发送 "pre\_shared\_key" 和 "early\_data" 扩展。
@@ -604,7 +616,6 @@ TLS 的实现不应该自动重新发送 early data；应用程序可以很好�
 - identities:  
 	Client 愿意和 Server 协商的 identities 列表。如果和 "early\_data" 一起发送，第一个标识被用来标识 0-RTT 的。
 	
-
 - binders:  
 	一系列的 HMAC 值。和 identities 列表中的每一个值都一一对应，并且顺序一致。
 

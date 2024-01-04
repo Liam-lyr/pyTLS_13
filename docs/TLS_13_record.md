@@ -4,8 +4,9 @@
 >
 > 对应代码：`/src/protocal_recordlayer.py`
 
-
 本节将介绍 RFC 8446 - Sec 5 - Record Protocol 中的内容，并给出本项目中的实现。本节将只介绍重要的 5.1 - Record Layer 和 5.2 - Record Payload Protection。本项目也有实现其余内容（5.3～5.5），但不算重点，故不在本节介绍，请读者自行阅读 RFC 8446。
+
+
 
 
 ## Record Layer
@@ -154,7 +155,6 @@ class TLSInnerPlaintext:
 - **legacy_record_version**：TLS 版本（2字节），为了 TLS 1.2 以前版本的兼容性，始终设置为 0x0303。
 - **length**：上层结构体的字节长度（2字节）。是内容和填充的长度之和，加上内部内容类型的长度加上 AEAD 算法添加的任何扩展。长度不得超过 `2 ^ 14 + 256` 字节。接收超过此长度的记录的端点必须使用 "record_overflow" alert 消息终止连接。
 - **encrypted_record**：AEAD 加密形式的序列化 `TLSInnerPlaintext` 结构。
-
 
 ### AEAD 加密
 
