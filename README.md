@@ -10,7 +10,7 @@
 
 由于本项目所有消息的字节级设计、交互流程均遵循 [RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446) 规范，故所有报文内容与现实中网络中通行的完全一致，并可直接与现实中使用 TLS 1.3 的其他主机直接通信，可通过 OpenSSL 直接运行以得到验证，将以类似 Wireshark 等嗅探器得到的 16 进制报文内容进行输出。在连接成功建立后，允许用户通过键盘在两端进行交互。
 
-### Implemented Featuress
+### Implemented Features
 
 参照 [RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446) 章节：
 
