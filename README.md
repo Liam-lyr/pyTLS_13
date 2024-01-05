@@ -143,9 +143,9 @@ openssl s_client -connect 127.0.0.1:50007 -tls1_3 -state -debug
 
 一份典型的运行日志，见 `/examples/server_openssl.log`, `/examples/client_openssl.log`。由于本项目所有消息的字节级设计均遵循 [RFC 8446](https://tools.ietf.org/html/rfc8446)，故所有报文内容与现实中网络中通行的完全一致。
 
-可查阅两份 log 文件，其中记录了所有交换的报文内容。内容为 openssl debug 模式输出，相关内容更容易查找。自然也包括了加密套件、确定的密钥协商算法等（可直接定位到 ServerHello, ClientHello 中查看）。对于双方协商及后续导出的密钥，可直接在 log 文件中搜索 "shared key", "early secret", "handshake secret", "master secret" 等。可以看到，双方计算出的结果完全一致。
+可查阅两份 log 文件，其中记录了所有交换的报文内容。内容为 openssl debug 模式输出，包括了加密套件、确定的密钥协商算法等（可直接定位到 ServerHello, ClientHello 中查看）。对于双方协商及后续导出的密钥，可直接在 log 文件中搜索 "shared key", "early secret", "handshake secret", "master secret" 等。可以看到双方计算出的结果完全一致。
 
-运行后，经过短暂握手过程，即可开始传递应用数据，可任意输入。如下是 client 侧的输入界面，在 “read R BLOCK” 字样出现后，随时开始输入即可 （下图中，传递应用数据“Hi server! Im always wondering why I have so many projects... I feal frustrated.”）。server 侧同理，直接输入内容即可。在一侧发送消息，另一侧也可收到，且可查看完整的字节级报文内容。
+运行后，经过短暂握手过程，即可开始传递应用数据，可任意输入。如下是 client 侧的输入界面，在 “read R BLOCK” 字样出现后，随时开始输入即可 （下图中，传递应用数据 “Hi server! Im always wondering why I have so many projects... I feal frustrated.”）。server 侧同理，直接输入内容即可。在一侧发送消息，另一侧也可收到，且可查看完整的字节级报文内容。
 
 <img src="docs/assets/截屏2023-11-13_23.40.53.png" style="zoom:75%;" />
 
